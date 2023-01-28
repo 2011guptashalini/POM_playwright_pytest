@@ -3,6 +3,7 @@ from products.demo_site.pages.LoginPage import LoginPage
 from products.demo_site.tests import conftest
 
 
+
 class TestLogin:
     def test_no_credentials(self, set_up_tear_down) -> None:
         page = set_up_tear_down
