@@ -5,6 +5,8 @@ class DashboardPage:
     def __init__(self, page):
         self.page = page
         # Locators
+        self._dashboard_text = self.page.locator("//span[text()='My Clients']")
 
-    def dashboard_displayed(self):
-        expect(self.page).to_have_title("Advertise Purple Business Intelligence")
+    @property
+    def dashboard_page(self):
+        return self._dashboard_text

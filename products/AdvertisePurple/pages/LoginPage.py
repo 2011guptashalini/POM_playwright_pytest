@@ -1,3 +1,6 @@
+import time
+
+
 class LoginPage:
     def __init__(self, page):
         self.page = page
@@ -14,3 +17,11 @@ class LoginPage:
 
     def click_sign_in(self):
         self._sign_in_btn.click()
+        time.sleep(10)
+
+    def do_login(self, credentials):
+        self.enter_username(credentials['username'])
+        self.enter_password(credentials['password'])
+        self.click_sign_in()
+
+

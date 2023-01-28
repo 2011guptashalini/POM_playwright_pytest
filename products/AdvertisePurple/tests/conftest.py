@@ -1,15 +1,16 @@
 import logging
 
-import pymysql
+import os
 import pytest
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+from typing import Generator
 
 import sshtunnel
-global ENV_NAME
+from playwright.sync_api import Playwright, APIRequestContext
 
 from products.AdvertisePurple.utils import utils as util
 
@@ -17,7 +18,9 @@ from products.AdvertisePurple.utils import utils as util
 @pytest.fixture()
 def set_up_tear_down(page) -> None:
     page.set_viewport_size({"width": 1536, "height": 800})
+    page.set_default_timeout(0)
     page.goto(util.URL)
+
     yield page
 
     # instance of MIMEMultipart
@@ -70,39 +73,19 @@ def set_up_tear_down(page) -> None:
     s.quit()
     page.close()
 
-
-@pytest.fixture()
-def connect_to_db():
-    # Connecting to DB
-    verbose = False
-    if verbose:
-        sshtunnel.DEFAULT_LOGLEVEL = logging.DEBUG
-
-    global tunnel
-    if ENV_NAME == 'testing':
-        tunnel = sshtunnel.SSHTunnelForwarder(ssh_address_or_host=('50.19.142.20', 22)
-                                              , ssh_username='ubuntu'
-                                              , ssh_pkey='C:/Users/gupta/Desktop/Advertise_Puple/key/ap-db-aws.pem'
-                                              , remote_bind_address=('advertise-purple-testing.cihesg5bocgi.us-east-1.rds.amazonaws.com', 3306)
-                                              )
-    if ENV_NAME == 'staging':
-        tunnel = sshtunnel.SSHTunnelForwarder(ssh_address_or_host=('50.19.142.20', 22)
-                                              , ssh_username='ubuntu'
-                                              , ssh_pkey='C:/Users/gupta/Desktop/Advertise_Puple/key/ap-db-aws.pem'
-                                              , remote_bind_address=('advertise-purple-testi23ng.cihesg5bocgi.us-east-1.rds.amazonaws.com', 3306)
-                                              )
-
-    tunnel.start()
-
-    global connection
-    local_bind_port = 0
-
-    connection = pymysql.connect(
-        host='127.0.0.1',
-        user='advertise_purple',
-        passwd='KXEHncaVuj3Gm76',
-        db='advertise_purple',
-        port=tunnel.local_bind_port)
-    yield connection
-    connection.close()
-    tunnel.close()
+    @pytest.fixture(scope="session")
+    def api_request_context(
+            playwright: Playwright,
+    ) -> Generator[APIRequestContext, None, None]:
+        headers = {
+            # We set this header per GitHub guidelines.
+            "Accept": "application/vnd.github.v3+json",
+            # Add authorization token to all requests.
+            # Assuming personal access token available in the environment.
+            "Authorization": f"token {GITHUB_API_TOKEN}",
+        }
+        request_context = playwright.request.new_context(
+            base_url="https://api.github.com", extra_http_headers=headers
+        )
+        yield request_context
+        request_context.dispose()
