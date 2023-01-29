@@ -1,6 +1,7 @@
 import time
 
 from products.AdvertisePurple.utils import utils as util
+from products.AdvertisePurple.utils import ap_mysql as AP_MYSQL
 
 
 class AffiliateSurveyPage:
@@ -18,9 +19,8 @@ class AffiliateSurveyPage:
 
         # finding affiliate id from DB
         sql_query_affiliate_id = f'''select id from affiliates where name = '{util.AFFILIATE_NAME}';'''
-        util.connect_db()
-        self.affiliate_id = util.run_query(sql_query_affiliate_id)
-        util.disconnect_db()
+        res = AP_MYSQL.run_query(sql_query_affiliate_id)
+        self.affiliate_id = res[0]
 
         # Filling affiliate corporate name
         self._affiliate_corporate_name = self.page.get_by_label("Affiliate Corporate Name")

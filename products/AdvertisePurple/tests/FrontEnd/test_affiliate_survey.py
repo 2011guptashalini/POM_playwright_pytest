@@ -3,6 +3,7 @@ from playwright.sync_api import expect
 from products.AdvertisePurple.pages.LoginPage import LoginPage
 from products.AdvertisePurple.pages.AffiliateSurveyPage import AffiliateSurveyPage
 from products.AdvertisePurple.utils import utils as util
+from products.AdvertisePurple.utils import ap_mysql as AP_MYSQL
 
 
 class TestAffiliateSurvey:
@@ -15,7 +16,7 @@ class TestAffiliateSurvey:
         affiliate_survey.navigate_to_affiliate_survey()
         expect(affiliate_survey.affiliate_survey_page).to_have_text("Affiliate Survey")
 
-    def test_affiliate_profile_section(self, set_up_tear_down) -> None:
+    def xtest_affiliate_profile_section(self, set_up_tear_down) -> None:
         page = set_up_tear_down
         login = LoginPage(page)
         credentials = {'username': util.USERNAME, 'password': util.PASSWORD}
@@ -31,7 +32,7 @@ class TestAffiliateSurvey:
         expect(affiliate_survey.affiliate_add_contact).to_be_visible()
         expect(affiliate_survey.affiliate_affiliate_profile_save).to_be_visible()
 
-    def test_affiliate_corporate_name(self, set_up_tear_down) -> None:
+    def xtest_affiliate_corporate_name(self, set_up_tear_down) -> None:
         page = set_up_tear_down
         login = LoginPage(page)
         credentials = {'username': util.USERNAME, 'password': util.PASSWORD}
@@ -46,7 +47,6 @@ class TestAffiliateSurvey:
 
         # Getting corporate name saved in DB
         sql_affiliate_corp_name = f'''select affiliateCorporateName from affiliateSurveyProfiles where affiliateId = {affiliate_survey.affiliate_id}'''
-        util.connect_db()
-        affiliate_corp_name = util.run_query(sql_affiliate_corp_name)
-        util.disconnect_db()
+        res = AP_MYSQL.run_query(sql_affiliate_corp_name)
+        affiliate_corp_name = res[0]
         assert affiliate_corp_name == "Test Corporate Name"

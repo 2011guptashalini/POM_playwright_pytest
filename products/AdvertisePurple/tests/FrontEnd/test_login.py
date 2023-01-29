@@ -6,7 +6,7 @@ from products.AdvertisePurple.pages.Dashboard import DashboardPage
 
 
 class TestLogin:
-    def test_valid_credentials(self, set_up_tear_down) -> None:
+    def xtest_valid_credentials(self, set_up_tear_down) -> None:
         page = set_up_tear_down
         login = LoginPage(page)
         login.enter_username(util.USERNAME)

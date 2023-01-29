@@ -1,6 +1,4 @@
-import logging
 
-import os
 import pytest
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -9,10 +7,11 @@ from email.mime.base import MIMEBase
 from email import encoders
 from typing import Generator
 
-import sshtunnel
+
 from playwright.sync_api import Playwright, APIRequestContext
 
 from products.AdvertisePurple.utils import utils as util
+from products.AdvertisePurple.utils import ap_mysql as AP_MYSQL
 
 
 @pytest.fixture()
@@ -20,6 +19,7 @@ def set_up_tear_down(page) -> None:
     page.set_viewport_size({"width": 1536, "height": 800})
     page.set_default_timeout(0)
     page.goto(util.URL)
+    AP_MYSQL.connect_db()
 
     yield page
 
@@ -71,6 +71,7 @@ def set_up_tear_down(page) -> None:
     # terminating the session
 
     s.quit()
+    AP_MYSQL.disconnect_db()
     page.close()
 
     @pytest.fixture(scope="session")
