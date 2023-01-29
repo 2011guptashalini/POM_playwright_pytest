@@ -1,1 +1,5 @@
 /products/AdvertisePurple/test-results/
+/products/AdvertisePurple/testing.env
+/products/AdvertisePurple/utils/my_sql.py
+/products/AdvertisePurple/utils/ap_mysql.py
+/products/AdvertisePurple/tests/conftest.py
