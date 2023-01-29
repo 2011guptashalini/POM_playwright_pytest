@@ -1,7 +1,7 @@
 import time
 
 from products.AdvertisePurple.utils import utils as util
-from products.AdvertisePurple.utils import ap_mysql as AP_MYSQL
+from products.AdvertisePurple.utils import ap_mysql_delete as AP_MYSQL
 
 
 class AffiliateSurveyPage:
